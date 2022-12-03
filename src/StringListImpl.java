@@ -5,17 +5,19 @@ public class StringListImpl implements StringList {
     private final String[] list;
     private int realSize = 0;
 
+    public StringListImpl() {
+        list = new String[10];
+    }
+
     public StringListImpl(int size) {
         list = new String[size];
     }
 
     @Override
     public String add(String item) throws RuntimeException {
-        if (!contains(null)) {
-            throw new RuntimeException("Массив полностью заполнен");
-        }
+        validateSize();
 
-        for (int i = 0; i < list.length; i++) {
+        for (int i = 0; i <= realSize; i++) {
             if (list[i] == null) {
                 list[i] = item;
                 break;
@@ -27,9 +29,9 @@ public class StringListImpl implements StringList {
 
     @Override
     public String add(int index, String item) throws RuntimeException {
-        if (list.length < index) {
-            throw new RuntimeException("Размер массива меньше указанного индекса");
-        }
+        validateSize();
+        validateIndex(index);
+        validateString(item);
 
         if (list[index] != null) {
             throw new RuntimeException("Эта ячейка массива уже заполнена");
@@ -40,10 +42,9 @@ public class StringListImpl implements StringList {
 
     @Override
     public String set(int index, String item) throws RuntimeException {
-        if (list.length < index) {
-            throw new RuntimeException("Размер массива меньше указанного индекса");
-        }
-
+        validateSize();
+        validateIndex(index);
+        validateString(item);
         if (list[index] == null) {
             list[index] = item;
             realSize++;
@@ -55,12 +56,10 @@ public class StringListImpl implements StringList {
     }
 
     @Override
-    public String remove(String item) {
-        if (!contains(item)) {
-            throw new RuntimeException("Такого элемента в массиве нет");
-        }
+    public String remove(String item) throws RuntimeException{
+       validateString(item);
 
-        for (int i = 0; i < item.length() - 2; i++) {
+        for (int i = 0; i < realSize; i++) {
             if (list[i].equals(item)) {
                 for (int j = i; j < list.length - i; j++) {
                     list[j] = list[j + 1];
@@ -73,11 +72,9 @@ public class StringListImpl implements StringList {
 
     @Override
     public String remove(int index) {
-        if (list.length < index + 1 || list[index] == null) {
-            throw new RuntimeException("Такого элемента в массиве нет");
-        }
-
-        for (int i = index; i < list.length - 2; i++) {
+        validateSize();
+        validateIndex(index);
+        for (int i = index; i < realSize; i++) {
             list[i] = list[i + 1];
         }
         list[list.length - 1] = null;
@@ -91,7 +88,7 @@ public class StringListImpl implements StringList {
 
     @Override
     public int indexOf(String item) {
-        for (int i = 0; i < list.length - 1; i++) {
+        for (int i = 0; i < realSize; i++) {
             if (list[i].equals(item)) {
                 return i;
             }
@@ -101,7 +98,7 @@ public class StringListImpl implements StringList {
 
     @Override
     public int lastIndexOf(String item) {
-        for (int i = list.length - 1; i > 0; i--) {
+        for (int i = realSize - 1; i > 0; i--) {
             if (list[i].equals(item)) {
                 return i;
             }
@@ -111,9 +108,8 @@ public class StringListImpl implements StringList {
 
     @Override
     public String get(int index) {
-        if (list.length < index + 1) {
-            throw new RuntimeException("Указанный индекс выходит за пределы массива");
-        } else return list[index];
+        validateIndex(index);
+        return list[index];
     }
 
     @Override
@@ -139,5 +135,23 @@ public class StringListImpl implements StringList {
     @Override
     public String[] toArray() {
         return Arrays.copyOf(list, realSize);
+    }
+
+    public void validateString(String item) {
+        if (item == null) {
+            throw new RuntimeException();
+        }
+    }
+
+    public void validateSize() {
+        if (realSize == list.length) {
+            throw new RuntimeException();
+        }
+    }
+
+    public void validateIndex(int index) {
+        if (index < 0 || index > realSize) {
+            throw new RuntimeException();
+        }
     }
 }
