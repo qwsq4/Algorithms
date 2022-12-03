@@ -2,7 +2,7 @@ import java.util.Arrays;
 import java.util.stream.Stream;
 
 public class StringListImpl implements StringList {
-    private final String[] list;
+    private String[] list;
     private int realSize = 0;
 
     public StringListImpl() {
@@ -71,7 +71,7 @@ public class StringListImpl implements StringList {
     }
 
     @Override
-    public String remove(int index) {
+    public String remove(int index) throws RuntimeException{
         validateSize();
         validateIndex(index);
         for (int i = index; i < realSize; i++) {
@@ -82,12 +82,14 @@ public class StringListImpl implements StringList {
     }
 
     @Override
-    public boolean contains(String item) {
+    public boolean contains(String item)  throws RuntimeException{
+        validateString(item);
         return Arrays.stream(list).toList().contains(item);
     }
 
     @Override
-    public int indexOf(String item) {
+    public int indexOf(String item) throws RuntimeException{
+        validateString(item);
         for (int i = 0; i < realSize; i++) {
             if (list[i].equals(item)) {
                 return i;
@@ -97,7 +99,8 @@ public class StringListImpl implements StringList {
     }
 
     @Override
-    public int lastIndexOf(String item) {
+    public int lastIndexOf(String item) throws RuntimeException{
+        validateString(item);
         for (int i = realSize - 1; i > 0; i--) {
             if (list[i].equals(item)) {
                 return i;
@@ -107,7 +110,7 @@ public class StringListImpl implements StringList {
     }
 
     @Override
-    public String get(int index) {
+    public String get(int index) throws RuntimeException{
         validateIndex(index);
         return list[index];
     }
@@ -129,6 +132,7 @@ public class StringListImpl implements StringList {
 
     @Override
     public void clear() {
+        this.list = new String[10];
         realSize = 0;
     }
 
