@@ -1,3 +1,5 @@
+package Content;
+
 public interface StringList {
 
     // Добавление элемента.

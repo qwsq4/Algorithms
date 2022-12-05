@@ -1,5 +1,6 @@
+package Content;
+
 import java.util.Arrays;
-import java.util.stream.Stream;
 
 public class StringListImpl implements StringList {
     private String[] list;
@@ -33,10 +34,15 @@ public class StringListImpl implements StringList {
         validateIndex(index);
         validateString(item);
 
-        if (list[index] != null) {
-            throw new RuntimeException("Эта ячейка массива уже заполнена");
-        } else list[index] = item;
-        realSize++;
+        if (list[index] == null) {
+            list[index] = item;
+        } else {
+            for (int i = realSize - 1; i > index; i--) {
+                list[i] = list[i - 1];
+            }
+            list[index] = item;
+            realSize++;
+        }
         return "Строка " + item + " добавлена в массив";
     }
 
@@ -59,13 +65,14 @@ public class StringListImpl implements StringList {
     public String remove(String item) throws RuntimeException{
        validateString(item);
 
-        for (int i = 0; i < realSize; i++) {
+        for (int i = 0; i < realSize - 1; i++) {
             if (list[i].equals(item)) {
-                for (int j = i; j < list.length - i; j++) {
+                for (int j = i; j < realSize - i; j++) {
                     list[j] = list[j + 1];
                 }
             }
         }
+        realSize--;
         list[list.length - 1] = null;
         return "Строка " + item + " удалена из массива";
     }
@@ -77,6 +84,7 @@ public class StringListImpl implements StringList {
         for (int i = index; i < realSize; i++) {
             list[i] = list[i + 1];
         }
+        realSize--;
         list[list.length - 1] = null;
         return "Строка под индексом " + index + "была удалена из массива";
     }
@@ -117,7 +125,7 @@ public class StringListImpl implements StringList {
 
     @Override
     public boolean equals(StringList otherList) {
-        return Arrays.equals(this.toArray(), otherList.toArray());
+        return Arrays.equals(this.toArray(), otherList.toArray()) && this.realSize == otherList.size();
     }
 
     @Override
@@ -143,19 +151,19 @@ public class StringListImpl implements StringList {
 
     public void validateString(String item) {
         if (item == null) {
-            throw new RuntimeException();
+            throw new RuntimeException("Строка не может быть равна null");
         }
     }
 
     public void validateSize() {
         if (realSize == list.length) {
-            throw new RuntimeException();
+            throw new RuntimeException("Кол-во элементов не может быть больше размера массива");
         }
     }
 
     public void validateIndex(int index) {
         if (index < 0 || index > realSize) {
-            throw new RuntimeException();
+            throw new RuntimeException("Индекс не может быть отрицательным");
         }
     }
 }
